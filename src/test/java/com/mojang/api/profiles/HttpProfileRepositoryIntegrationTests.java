@@ -30,10 +30,10 @@ public class HttpProfileRepositoryIntegrationTests {
         Profile[] profiles = repository.findProfilesByNames("mollstam", "KrisJelbring");
 
         assertThat(profiles.length, is(2));
-        assertThat(profiles[0].getName(), is(equalTo("mollstam")));
-        assertThat(profiles[0].getId(), is(equalTo("f8cdb6839e9043eea81939f85d9c5d69")));
-        assertThat(profiles[1].getName(), is(equalTo("KrisJelbring")));
-        assertThat(profiles[1].getId(), is(equalTo("7125ba8b1c864508b92bb5c042ccfe2b")));
+        assertThat(profiles[0].getName(), is(equalTo("KrisJelbring")));
+        assertThat(profiles[0].getId(), is(equalTo("7125ba8b1c864508b92bb5c042ccfe2b")));
+        assertThat(profiles[1].getName(), is(equalTo("mollstam")));
+        assertThat(profiles[1].getId(), is(equalTo("f8cdb6839e9043eea81939f85d9c5d69")));
     }
 
     @Test
