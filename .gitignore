@@ -13,3 +13,8 @@ user.gradle
 logs/
 /*.ids
 *.log
+/bin/
+/target/
+.project
+.settings/
+.classpath
