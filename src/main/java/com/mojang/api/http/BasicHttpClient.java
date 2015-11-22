@@ -37,29 +37,46 @@ public class BasicHttpClient implements HttpClient {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
         connection.setRequestMethod("POST");
 
+        return getResponse(connection, body, headers);
+    }
+
+    @Override
+    public String get(URL url, List<HttpHeader> headers) throws IOException {
+        return get(url, null, headers);
+    }
+
+    @Override
+    public String get(URL url, Proxy proxy, List<HttpHeader> headers) throws IOException {
+        if (proxy == null) proxy = Proxy.NO_PROXY;
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
+
+        return getResponse(connection, null, headers);
+    }
+
+    private static String getResponse(HttpURLConnection connection, HttpBody body, List<HttpHeader> headers) throws IOException {
         for (HttpHeader header : headers) {
             connection.setRequestProperty(header.getName(), header.getValue());
         }
 
         connection.setUseCaches(false);
         connection.setDoInput(true);
-        connection.setDoOutput(true);
 
-        DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-        writer.write(body.getBytes());
-        writer.flush();
-        writer.close();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String line;
-        StringBuffer response = new StringBuffer();
-
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
-            response.append('\r');
+        if (body != null) {
+            connection.setDoOutput(true);
+            try (DataOutputStream writer = new DataOutputStream(connection.getOutputStream())) {
+                writer.write(body.getBytes());
+            }
         }
 
-        reader.close();
+        StringBuilder response = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+        }
         return response.toString();
     }
+    
 }

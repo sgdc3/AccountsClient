@@ -1,13 +1,15 @@
 package com.mojang.api.profiles;
 
+import java.util.UUID;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
 public class HttpProfileRepositoryIntegrationTests {
@@ -44,4 +46,16 @@ public class HttpProfileRepositoryIntegrationTests {
 
         assertThat(profiles.length, is(0));
     }
+
+    @Test
+    public void findProfileById_existingNameProvided_returnsProfile() throws Exception {
+        ProfileRepository repository = new HttpProfileRepository("minecraft");
+
+        Profile profile = repository.findProfileById(UUID.fromString("c35a67c9-b797-469f-a893-cf81b4104898"));
+
+        assertThat(profile, notNullValue());
+        assertThat(profile.getName(), is(equalTo("Weasel_Squeezer")));
+        assertThat(profile.getId(), is(equalTo("c35a67c9b797469fa893cf81b4104898")));
+    }
+    
 }

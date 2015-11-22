@@ -11,8 +11,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class HttpProfileRepository implements ProfileRepository {
 
@@ -57,10 +57,23 @@ public class HttpProfileRepository implements ProfileRepository {
                 i++;
             } while (start < namesCount);
         } catch (Exception e) {
-            // TODO: logging and allowing consumer to react?
+            e.printStackTrace();
         }
 
         return profiles.toArray(new Profile[profiles.size()]);
+    }
+
+    @Override
+    public Profile findProfileById(UUID uuid) {
+        try {
+            List<HttpHeader> headers = new ArrayList<HttpHeader>();
+            headers.add(new HttpHeader("Content-Type", "application/json"));
+
+            return get(getSessionUrl(uuid), headers);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private URL getProfilesUrl() throws MalformedURLException {
@@ -68,12 +81,23 @@ public class HttpProfileRepository implements ProfileRepository {
         return new URL("https://api.mojang.com/profiles/" + agent);
     }
 
+    private URL getSessionUrl(UUID uuid) throws MalformedURLException {
+        String profileId = uuid.toString().replace("-", "");
+        return new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + profileId);
+    }
+
     private Profile[] post(URL url, HttpBody body, List<HttpHeader> headers) throws IOException {
         String response = client.post(url, body, headers);
-        return gson.fromJson(response, Profile[].class);
+        return (!response.isEmpty() ? gson.fromJson(response, Profile[].class) : null);
+    }
+
+    private Profile get(URL url, List<HttpHeader> headers) throws IOException {
+        String response = client.get(url, headers);
+        return (!response.isEmpty() ? gson.fromJson(response, Profile.class) : null);
     }
 
     private static HttpBody getHttpBody(String... namesBatch) {
         return new HttpBody(gson.toJson(namesBatch));
     }
+
 }
