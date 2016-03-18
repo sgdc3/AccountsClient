@@ -57,7 +57,7 @@ public class HttpProfileRepository implements ProfileRepository {
                 i++;
             } while (start < namesCount);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return profiles.toArray(new Profile[profiles.size()]);
@@ -71,7 +71,7 @@ public class HttpProfileRepository implements ProfileRepository {
 
             return get(getSessionUrl(uuid), headers);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }

@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class BasicHttpClient implements HttpClient {
 
+    private static final int CONNECT_TIMEOUT_MILLIS = 3000;
+    private static final int READ_TIMEOUT_MILLIS = 4000;
+
     private static BasicHttpClient instance;
 
     private BasicHttpClient() {
@@ -60,6 +63,8 @@ public class BasicHttpClient implements HttpClient {
 
         connection.setUseCaches(false);
         connection.setDoInput(true);
+        connection.setConnectTimeout(CONNECT_TIMEOUT_MILLIS);
+        connection.setReadTimeout(READ_TIMEOUT_MILLIS);
 
         if (body != null) {
             connection.setDoOutput(true);
