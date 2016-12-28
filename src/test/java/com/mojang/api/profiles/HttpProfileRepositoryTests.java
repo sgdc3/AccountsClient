@@ -51,9 +51,7 @@ public class HttpProfileRepositoryTests {
     }
 
     private static Profile getProfile(String name) {
-        Profile profile = new Profile();
-        profile.setName(name);
-        return profile;
+        return new Profile(null, name);
     }
 
 }

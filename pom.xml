@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mojang</groupId>
 	<artifactId>accounts-client</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<name>AccountsClient</name>
 	<url>http://github.com/Mojang/AccountsClient</url>
 	

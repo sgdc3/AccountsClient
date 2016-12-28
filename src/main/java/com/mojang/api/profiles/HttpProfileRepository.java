@@ -119,16 +119,17 @@ public class HttpProfileRepository implements ProfileRepository {
         @Override
         public Profile deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject jsonObj = json.getAsJsonObject();
-            Profile profile = new Profile();
-            JsonElement id = jsonObj.get("id");
-            if (id != null) {
-                profile.setId(parseShortenedUuid(id.getAsString()));
+            UUID id = null;
+            JsonElement idElement = jsonObj.get("id");
+            if (idElement != null) {
+                id = parseShortenedUuid(idElement.getAsString());
             }
-            JsonElement name = jsonObj.get("name");
-            if (name != null) {
-                profile.setName(name.getAsString());
+            String name = null;
+            JsonElement nameElement = jsonObj.get("name");
+            if (nameElement != null) {
+                name = nameElement.getAsString();
             }
-            return profile;
+            return new Profile(id, name);
         }
     }
 
