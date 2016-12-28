@@ -22,7 +22,7 @@ public class HttpProfileRepositoryIntegrationTests {
 
         assertThat(profiles.length, is(1));
         assertThat(profiles[0].getName(), is(equalTo("mollstam")));
-        assertThat(profiles[0].getId(), is(equalTo("f8cdb6839e9043eea81939f85d9c5d69")));
+        assertThat(profiles[0].getId(), is(equalTo(UUID.fromString("f8cdb683-9e90-43ee-a819-39f85d9c5d69"))));
     }
 
     @Test
@@ -33,9 +33,9 @@ public class HttpProfileRepositoryIntegrationTests {
 
         assertThat(profiles.length, is(2));
         assertThat(profiles[0].getName(), is(equalTo("KrisJelbring")));
-        assertThat(profiles[0].getId(), is(equalTo("7125ba8b1c864508b92bb5c042ccfe2b")));
+        assertThat(profiles[0].getId(), is(equalTo(UUID.fromString("7125ba8b-1c86-4508-b92b-b5c042ccfe2b"))));
         assertThat(profiles[1].getName(), is(equalTo("mollstam")));
-        assertThat(profiles[1].getId(), is(equalTo("f8cdb6839e9043eea81939f85d9c5d69")));
+        assertThat(profiles[1].getId(), is(equalTo(UUID.fromString("f8cdb683-9e90-43ee-a819-39f85d9c5d69"))));
     }
 
     @Test
@@ -51,11 +51,12 @@ public class HttpProfileRepositoryIntegrationTests {
     public void findProfileById_existingNameProvided_returnsProfile() throws Exception {
         ProfileRepository repository = new HttpProfileRepository("minecraft");
 
-        Profile profile = repository.findProfileById(UUID.fromString("c35a67c9-b797-469f-a893-cf81b4104898"));
+        UUID playerId = UUID.fromString("c35a67c9-b797-469f-a893-cf81b4104898");
+        Profile profile = repository.findProfileById(playerId);
 
         assertThat(profile, notNullValue());
         assertThat(profile.getName(), is(equalTo("Weasel_Squeezer")));
-        assertThat(profile.getId(), is(equalTo("c35a67c9b797469fa893cf81b4104898")));
+        assertThat(profile.getId(), is(equalTo(playerId)));
     }
     
 }

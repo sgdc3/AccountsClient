@@ -1,14 +1,17 @@
 package com.mojang.api.profiles;
 
+import java.util.UUID;
+
 public class Profile {
-    private String id;
+
+    private UUID id;
     private String name;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

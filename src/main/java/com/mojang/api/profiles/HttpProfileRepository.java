@@ -1,12 +1,19 @@
 package com.mojang.api.profiles;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.mojang.api.http.BasicHttpClient;
 import com.mojang.api.http.HttpBody;
 import com.mojang.api.http.HttpClient;
 import com.mojang.api.http.HttpHeader;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,7 +26,7 @@ public class HttpProfileRepository implements ProfileRepository {
     // You're not allowed to request more than 100 profiles per go.
     private static final int PROFILES_PER_REQUEST = 100;
 
-    private static Gson gson = new Gson();
+    private static Gson gson = new GsonBuilder().registerTypeAdapter(Profile.class, new ProfileDeserializer()).create();
     private final String agent;
     private HttpClient client;
 
@@ -82,8 +89,7 @@ public class HttpProfileRepository implements ProfileRepository {
     }
 
     private URL getSessionUrl(UUID uuid) throws MalformedURLException {
-        String profileId = uuid.toString().replace("-", "");
-        return new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + profileId);
+        return new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + toShortenedUuid(uuid));
     }
 
     private Profile[] post(URL url, HttpBody body, List<HttpHeader> headers) throws IOException {
@@ -98,6 +104,32 @@ public class HttpProfileRepository implements ProfileRepository {
 
     private static HttpBody getHttpBody(String... namesBatch) {
         return new HttpBody(gson.toJson(namesBatch));
+    }
+
+    private static String toShortenedUuid(UUID uuid) {
+        return uuid.toString().replace("-", "");
+    }
+
+    public static UUID parseShortenedUuid(String shortenedUuid) {
+        return UUID.fromString(shortenedUuid.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
+    }
+
+    private static class ProfileDeserializer implements JsonDeserializer<Profile> {
+
+        @Override
+        public Profile deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject jsonObj = json.getAsJsonObject();
+            Profile profile = new Profile();
+            JsonElement id = jsonObj.get("id");
+            if (id != null) {
+                profile.setId(parseShortenedUuid(id.getAsString()));
+            }
+            JsonElement name = jsonObj.get("name");
+            if (name != null) {
+                profile.setName(name.getAsString());
+            }
+            return profile;
+        }
     }
 
 }
